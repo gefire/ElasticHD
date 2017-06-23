@@ -153,6 +153,8 @@ func (se *Search) clusterStats(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var elasticStats = Stats{}
+	elasticStats.CPUUsed = stats.Nodes.Process.CPU.Percent
+	elasticStats.CPUFree = 100 - stats.Nodes.Process.CPU.Percent
 	elasticStats.ClusterName = stats.ClusterName
 	elasticStats.Docs = stats.Indices.Docs.Count
 	elasticStats.FieldDataMemUsed = stats.Indices.Fielddata.MemorySizeInBytes
@@ -166,7 +168,7 @@ func (se *Search) clusterStats(w http.ResponseWriter, r *http.Request) {
 	for _, item := range stats.Nodes.Jvm.Versions {
 		elasticStats.JvmVersions += item.Version + ","
 	}
-	elasticStats.MemFree = stats.Nodes.Os.Mem.FreeInBytes
+	elasticStats.MemFree = stats.Nodes.Os.Mem.TotalInBytes - stats.Nodes.Os.Mem.UsedInBytes
 	elasticStats.MemToatl = stats.Nodes.Os.Mem.TotalInBytes
 	elasticStats.MemUsed = stats.Nodes.Os.Mem.UsedInBytes
 	elasticStats.Plugins = stats.Nodes.Plugins
@@ -194,6 +196,12 @@ func (se *Search) handleTemplate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	c := elastigo.NewConn()
+	if u.User != nil {
+		c.Username = u.User.Username()
+		if pwd, bool := u.User.Password(); bool {
+			c.Password = pwd
+		}
+	}
 	c.Domain = strings.Split(u.Host, ":")[0]
 	c.Port = strings.Split(u.Host, ":")[1]
 	c.DecayDuration = 0
@@ -314,6 +322,12 @@ func (se *Search) search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	c := elastigo.NewConn()
+	if u.User != nil {
+		c.Username = u.User.Username()
+		if pwd, bool := u.User.Password(); bool {
+			c.Password = pwd
+		}
+	}
 	c.Domain = strings.Split(u.Host, ":")[0]
 	c.Port = strings.Split(u.Host, ":")[1]
 	c.DecayDuration = 0
@@ -356,18 +370,26 @@ func (se *Search) uploadTemplate(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+
 	filename := strings.Split(handler.Filename, ".json")[0]
 	data, err := ioutil.ReadAll(file)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
+
 	u, err := url.Parse(r.FormValue(`serverhost`))
 	if err != nil {
 		w.Write(jsonEncode(1, map[string]interface{}{"info": err.Error()}))
 		return
 	}
 	c := elastigo.NewConn()
+	if u.User != nil {
+		c.Username = u.User.Username()
+		if pwd, bool := u.User.Password(); bool {
+			c.Password = pwd
+		}
+	}
 	c.Domain = strings.Split(u.Host, ":")[0]
 	c.Port = strings.Split(u.Host, ":")[1]
 	c.DecayDuration = 0
@@ -408,6 +430,12 @@ func (se *Search) indexDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	c := elastigo.NewConn()
+	if u.User != nil {
+		c.Username = u.User.Username()
+		if pwd, bool := u.User.Password(); bool {
+			c.Password = pwd
+		}
+	}
 	c.Domain = strings.Split(u.Host, ":")[0]
 	c.Port = strings.Split(u.Host, ":")[1]
 	c.DecayDuration = 0

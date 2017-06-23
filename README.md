@@ -4,7 +4,7 @@ ElasticHD
 [![Go Documentation](http://img.shields.io/badge/go-documentation-blue.svg?style=flat-square)](https://godoc.org/github.com/farmerx/ElasticHD/main)
 [![Go Report Card](https://goreportcard.com/badge/github.com/Luxurioust/aurora)](https://goreportcard.com/report/github.com/farmerx/elasticHD/main)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/farmerx/elasticHD/blob/master/LICENSE)
-[![Release](https://img.shields.io/github/release/elasticHD/elasticHD.svg?label=Release)](https://github.com/farmerx/elasticHD/releases)
+[![Release](https://img.shields.io/github/release/elasticHD/elasticHD.svg?label=Release)](https://github.com/farmerx/elasticHD/releases/latest)
 [![GitHub issues](https://img.shields.io/github/issues/farmerx/ElasticHD.svg)](https://github.com/farmerx/ElasticHD/issues)
 > ElasticHD is a ElasticSearch visual management tool. It does not require any software. It works in your web browser, allowing you to manage and monitor your ElasticSearch clusters from anywhere at any time. Built on responsive CSS design, ElasticHD adjusts itself to any screen size on any device.The following functions are supported：
  * ES Real time data search and query
@@ -15,6 +15,8 @@ ElasticHD
  * ES 基本查询文档
  * Device Friendly
  
+## 支持权限认证
+> 支持有权限认证的ElasticSearch服务器，url格式：http://user:password@host:port
 
 ## Installation
 
@@ -114,6 +116,30 @@ statik -src=../dist
 # go build
 GO_ENABLED=0 GOOS=windows GOARCH=amd64  go build -o elasticHD.exe github.com/elasticHD/main
 ```
+## Docker Quick Start:
+```
+docker run -p 9200:9200 -d --name elasticsearch elasticsearch
+docker run -p 9800:9800 -d --link elasticsearch:demo containerize/elastichd
+```
+
+
+Open http://localhost:9800 in Browser
+Connect with http://demo:9200
+
+---
+
+Image link: https://hub.docker.com/r/containerize/elastichd/
+
+
+---
+
+Screen Shot:
+![image](https://user-images.githubusercontent.com/2404785/27365726-2dcda1b4-5674-11e7-948c-f0d3da6418c3.png)
+
+编译Docker Images
+docker build -t elastichd:latest .
+
+
 ## ElasticHD应用页面
 ![image](https://github.com/farmerx/ElasticHD/blob/master/Elastic%20HD%20Dashboard.png)
 ![image](https://github.com/farmerx/ElasticHD/blob/master/Elastic%20HD%20Dashboard%20(1).png)
